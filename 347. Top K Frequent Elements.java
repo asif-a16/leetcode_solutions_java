@@ -1,40 +1,37 @@
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 class Solution {
     public int[] topKFrequent(int[] nums, int k) {
-        HashMap<Integer, Integer> counts = new HashMap<>();
-        List<List<Integer>> frequencies = IntStream.range(0, nums.length)
-            .mapToObj(_ -> new ArrayList<Integer>())
-            .collect(Collectors.toList());
-
+        Map<Integer, Integer> counts = new HashMap<>();
         for (int num : nums) {
             counts.merge(num, 1, Integer::sum);
         }
 
-        counts.forEach((key, value) -> {
-            frequencies.get(value - 1).add(key);
+        List<List<Integer>> buckets = new ArrayList<>(nums.length + 1);
+
+        for (int i = 0; i <= nums.length; i++) {
+            buckets.add(null); 
+        }
+
+        counts.forEach((num, freq) -> {
+            if (buckets.get(freq) == null) {
+                buckets.set(freq, new ArrayList<>());
+            }
+            buckets.get(freq).add(num);
         });
 
         int[] result = new int[k];
-        int count = 0;
+        int index = 0;
 
-        while (count != k) {
-            for (int i = nums.length - 1; i > -1; i--) {
-                List<Integer> list = frequencies.get(i);
-                if (list.size() > 0) {
-                    for (Integer num : list) {
-                        result[count] = num;
-                        count++;
-                        if (count >= k) {
-                            return result;
-                        }
-                    }
+        for (int i = buckets.size() - 1; i >= 0 && index < k; i--) {
+            if (buckets.get(i) != null) {
+                for (int num : buckets.get(i)) {
+                    result[index++] = num;
+                    if (index == k) return result;
                 }
             }
         }
 
-        return new int[] {-1};
+        return result;
     }
 }

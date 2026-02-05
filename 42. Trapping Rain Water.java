@@ -12,19 +12,17 @@ class Solution {
             if (leftMax < rightMax) {
                 if (height[left] > leftMax) {
                     leftMax = height[left];
-                    left++;
                 } else {
                     result += minBoundary - height[left];
-                    left++;
                 }
+                left++;
             } else {
                 if (height[right] > rightMax) {
                     rightMax = height[right];
-                    right--;
                 } else {
                     result += minBoundary - height[right];
-                    right--;
                 }
+                right--;
             }
         }
 
